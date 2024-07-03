@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .expense-details {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .main-amount h2 {
+            color: #333;
+        }
+        .note {
+            margin-top: 10px;
+            color: #666;
+        }
+        .dates p {
+            color: #666;
+        }
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td {
+            background-color: #fff;
+        }
+        .status-paid {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+        .status-to-be-paid {
+            background-color: red;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+   
+    .pay-button {
+        background-color: #007bff;
+        color: #fff; 
+        border: none;
+        border-radius: 30px;
+        padding: 15px 25px;
+        cursor: pointer;
+        font-size: 16px;
+        float: right;
+        transition: background-color 0.3s ease; 
+    }
+
+    .pay-button:hover {
+        background-color: #1060b6; 
+    }
+
+    .cancel-button {
+        background-color: red;
+        color: #fff; 
+        border: none;
+        border-radius: 30px;
+        padding: 15px 25px;
+        cursor: pointer;
+        font-size: 16px;
+        float: right;
+        transition: background-color 0.3s ease; 
+    }
+
+    .cancel-button:hover {
+        background-color: #d64742; 
+    }
+
+    </style>
+</head>
+<body>
+<div style="background-color: #fff; padding: 10px; width: 100%; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: fixed; top: 0; left: 0; z-index: 999;">
+    <div class="action-btns" style="float: left;">
+        <a href="/"><img src="/images/lets-split-logo.png" alt="Logo image" style="width: 130px; height: 50px; padding-left: 40px;"></a>
+    </div>
+    <div class="dropdown" style="float: right; position: relative;">
+        <button class="dropbtn" style="color: white; background-color: #007bff; font-size: 17px; padding-top: 15px; border: none; border-radius: 5px; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-right: 65px;">Settings</button>
+            <div class="dropdown-content">
+                <a href="/changePassword" style="font-size: 15px; color: #696762;">Change Password</a>
+                <a href="/logout" style="font-size: 15px; color: #696762;">Logout</a>
+            </div>
+    </div>
+</div>
+<br><br><br><br><br>
+    <div class="expense-details">
+        <div class="main-amount">
+            <span style="font-size: 24px; font-weight: bold;">{{.ExpenseDetails.Title}}</span>
+            {{if eq .ExpenseDetails.Status 0}}
+                <button onclick="location.href='/cancelexpense?expenseId={{.ExpenseDetails.ExpenseId}}'" class="cancel-button" style="float: right;">Cancel</button>
+            {{end}}
+            {{if eq .ExpenseDetails.Paid 0}}
+                <a href="/markaspaid?expenseId={{.ExpenseDetails.ExpenseId}}"><button class="pay-button" style="float:right">Pay Now</button></a>
+            {{end}}
+        </div>
+        <div class="note">
+        <br>
+            <span style="font-weight: bold;">Rs.{{.ExpenseDetails.Amount}}<span>
+            <span style="font-weight: bold; float: right;">{{if eq .ExpenseDetails.OutstandingBalance 0.0 }}ALL Paid{{else}}Outstanding Balance: Rs. {{.ExpenseDetails.OutstandingBalance}}{{end}}<span>
+        </div>
+        <div class="note">Description: {{.ExpenseDetails.Note}}</div>
+        <div class="dates">
+            <span style="font-size: 13px; color: grey; float: right;">{{.ExpenseDetails.Date}}</span>
+            <span style="font-size: 13px; color: grey;">Spent by {{.ExpenseDetails.CreatedName}}</span>
+        </div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Split Amount</th>
+                <th>Paid On</th>
+                <th>Status</th>
+            </tr>
+            {{range .ExpenseDetails.SplitDetails}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{.Amount}}</td>
+                <td>{{if eq .DatePaid.Valid true}}{{.DatePaid.Time.Format "02/01/2006"}}{{end}}</td>
+                <td>
+                    {{if eq .DatePaid.Valid true}}<span class="status-paid">Paid</span>{{else}}<span class="status-to-be-paid">To be paid</span>{{end}}
+                </td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+</body>
+</html>
